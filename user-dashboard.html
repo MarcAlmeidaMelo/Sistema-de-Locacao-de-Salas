@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Painel - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div style="padding: 0 1.5rem; margin-bottom: 2rem;">
+        <h2 style="color: var(--white); margin-bottom: 0.5rem;">CajuHub</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Painel do Usuário</p>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showSection('reservations')">📅 Minhas Reservas</a></li>
+        <li><a href="#" onclick="showSection('new-reservation')">➕ Nova Reserva</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Painel do Usuário</h1>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Carregando...</span>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- SEÇÃO: MINHAS RESERVAS -->
+      <section id="section-reservations" style="display: block;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Minhas Reservas</h2>
+        <div id="reservations-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando reservas...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: NOVA RESERVA -->
+      <section id="section-new-reservation" style="display: none;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Criar Nova Reserva</h2>
+
+        <div class="grid grid-2">
+          <!-- SELEÇÃO DE SALA -->
+          <div class="card">
+            <div class="card-header">Selecione a Sala</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="space-select">Sala</label>
+                <select id="space-select" onchange="onSpaceSelected()">
+                  <option value="">-- Selecione uma sala --</option>
+                </select>
+              </div>
+              <div id="space-details"
+                style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <p><strong>Capacidade:</strong> <span id="space-capacity">-</span> pessoas</p>
+                <p><strong>Tamanho:</strong> <span id="space-size">-</span></p>
+                <p><strong>Valor por turno:</strong> <span id="space-price">-</span></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SELEÇÃO DE DATA E TURNO -->
+          <div class="card">
+            <div class="card-header">Data e Turno</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="shift-select">Turno</label>
+                <select id="shift-select">
+                  <option value="">-- Selecione um turno --</option>
+                  <option value="morning">Manhã (08:00 - 12:00)</option>
+                  <option value="afternoon">Tarde (13:00 - 17:00)</option>
+                  <option value="evening">Noite (18:00 - 22:00)</option>
+                </select>
+              </div>
+              <div id="calendar-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OBSERVAÇÕES E BOTÃO DE RESERVA -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">Detalhes da Reserva</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="notes">Observações (opcional)</label>
+              <textarea id="notes" placeholder="Adicione observações sobre sua reserva..."></textarea>
+            </div>
+
+            <div style="background-color: var(--light-bg); padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+              <p><strong>Data selecionada:</strong> <span id="selected-date-display">Nenhuma data selecionada</span></p>
+              <p><strong>Turno selecionado:</strong> <span id="selected-shift-display">Nenhum turno selecionado</span>
+              </p>
+              <p><strong>Valor:</strong> <span id="reservation-total">R$ 0,00</span></p>
+            </div>
+
+            <button class="btn btn-success" style="width: 100%; padding: 1rem;" onclick="submitReservation()">
+              ✓ Confirmar Reserva
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/calendar.js"></script>
+  <script>
+    let calendar = null;
+    let selectedSpace = null;
+    let selectedDate = null;
+    let selectedShift = null;
+
+    // Verificar autenticação
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+
+      if (!session.authenticated) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      if (session.user.role === 'admin') {
+        window.location.href = '/admin-dashboard.html';
+        return;
+      }
+
+      // Atualizar nome do usuário
+      document.getElementById('user-name').textContent = `Olá, ${session.user.name}`;
+
+      // Carregar reservas
+      await loadReservations();
+
+      // Carregar espaços
+      await loadSpaces();
+
+      // Verificar se há espaço selecionado
+      const selectedSpaceId = localStorage.getItem('selectedSpaceId');
+      if (selectedSpaceId) {
+        document.getElementById('space-select').value = selectedSpaceId;
+        await onSpaceSelected();
+        showSection('new-reservation');
+        localStorage.removeItem('selectedSpaceId');
+      }
+    });
+
+    async function loadReservations() {
+      const container = document.getElementById('reservations-container');
+      try {
+        const reservations = await getReservations();
+
+        if (reservations.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-body" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Você ainda não tem reservas.</p>
+                <button class="btn btn-primary" onclick="showSection('new-reservation')">
+                  Criar Primeira Reserva
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = reservations
+          .map(reservation => renderReservationCard(reservation))
+          .join('');
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar reservas</div>`;
+      }
+    }
+
+    async function loadSpaces() {
+      const select = document.getElementById('space-select');
+      try {
+        const spaces = await getSpaces();
+        const options = spaces
+          .map(space => `<option value="${space.id}" data-price="${space.price_per_shift}">${space.name}</option>`)
+          .join('');
+
+        select.innerHTML = '<option value="">-- Selecione uma sala --</option>' + options;
+      } catch (error) {
+        select.innerHTML = '<option value="">Erro ao carregar salas</option>';
+      }
+    }
+
+    async function onSpaceSelected() {
+      const spaceId = document.getElementById('space-select').value;
+
+      if (!spaceId) {
+        document.getElementById('space-details').style.display = 'none';
+        return;
+      }
+
+      try {
+        const space = await getSpace(spaceId);
+        selectedSpace = space;
+
+        // Atualizar detalhes
+        document.getElementById('space-capacity').textContent = space.capacity;
+        document.getElementById('space-size').textContent = space.size || 'N/A';
+        document.getElementById('space-price').textContent = formatCurrency(space.price_per_shift);
+        document.getElementById('space-details').style.display = 'block';
+
+        // Criar calendário
+        const calendarContainer = document.getElementById('calendar-container');
+        calendarContainer.innerHTML = '<div id="calendar"></div>';
+
+        calendar = new Calendar('calendar', {
+          onDateSelect: onDateSelected,
+          minDate: new Date(),
+          maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+        });
+
+        updateReservationTotal();
+      } catch (error) {
+        showAlert('Erro ao carregar detalhes da sala', 'danger');
+      }
+    }
+
+    async function onDateSelected(dateStr) {
+      selectedDate = dateStr;
+      document.getElementById('selected-date-display').textContent = formatDate(dateStr);
+      updateReservationTotal();
+    }
+
+    function showSection(sectionName) {
+      // Ocultar todas as seções
+      document.getElementById('section-reservations').style.display = 'none';
+      document.getElementById('section-new-reservation').style.display = 'none';
+
+      // Mostrar seção selecionada
+      if (sectionName === 'reservations') {
+        document.getElementById('section-reservations').style.display = 'block';
+        loadReservations();
+      } else if (sectionName === 'new-reservation') {
+        document.getElementById('section-new-reservation').style.display = 'block';
+      }
+
+      // Atualizar menu ativo
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function updateReservationTotal() {
+      const shiftSelect = document.getElementById('shift-select');
+      selectedShift = shiftSelect.value;
+
+      document.getElementById('selected-shift-display').textContent =
+        selectedShift ? formatShift(selectedShift) : 'Nenhum turno selecionado';
+
+      if (selectedSpace && selectedShift) {
+        document.getElementById('reservation-total').textContent =
+          formatCurrency(selectedSpace.price_per_shift);
+      } else {
+        document.getElementById('reservation-total').textContent = 'R$ 0,00';
+      }
+    }
+
+    document.getElementById('shift-select').addEventListener('change', updateReservationTotal);
+
+    async function submitReservation() {
+      if (!selectedSpace || !selectedDate || !selectedShift) {
+        showAlert('Por favor, selecione sala, data e turno', 'warning');
+        return;
+      }
+
+      const notes = document.getElementById('notes').value;
+
+      try {
+        await createReservation({
+          space_id: selectedSpace.id,
+          reservation_date: selectedDate,
+          shift: selectedShift,
+          notes: notes || null
+        });
+
+        // Limpar formulário
+        document.getElementById('space-select').value = '';
+        document.getElementById('shift-select').value = '';
+        document.getElementById('notes').value = '';
+        selectedSpace = null;
+        selectedDate = null;
+        selectedShift = null;
+
+        // Voltar para reservas
+        setTimeout(() => {
+          showSection('reservations');
+        }, 1500);
+      } catch (error) {
+        // Erro já foi exibido pelo showAlert
+      }
+    }
+  </script>
+</body>
+
+</html>

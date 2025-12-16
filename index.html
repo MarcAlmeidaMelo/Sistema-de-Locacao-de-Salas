@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CajuHub - Sistema de Locação de Salas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* CARROSSEL DO HERO - ESCURECER IMAGENS */
+        .carousel-slide img {
+            filter: brightness(0.85);
+        }
+
+        /* CARROSSEL DE SALAS */
+        .spaces-carousel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .spaces-carousel {
+            display: flex;
+            align-items: center;
+            min-height: 450px;
+            transition: none;
+        }
+
+        .spaces-carousel-slide {
+            display: none !important;
+            width: 100%;
+            flex-shrink: 0;
+            align-items: stretch;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .spaces-carousel-slide.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .spaces-carousel-image {
+            flex: 0 0 45%;
+            background-color: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            min-height: 450px;
+        }
+
+        .spaces-carousel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .spaces-carousel-content {
+            flex: 0 0 55%;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 450px;
+        }
+
+        .spaces-carousel-content h3 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .spaces-carousel-content p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            font-size: 1rem;
+        }
+
+        .spaces-carousel-info {
+            background-color: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .spaces-carousel-info p {
+            margin: 0.75rem 0;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .spaces-carousel-info strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .spaces-carousel-button {
+            align-self: flex-start;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+        }
+
+        .spaces-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(52, 152, 219, 0.85);
+            color: var(--white);
+            border: none;
+            font-size: 2rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border-radius: 4px;
+            z-index: 10;
+            user-select: none;
+        }
+
+        .spaces-carousel-arrow:hover {
+            background-color: rgba(52, 152, 219, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .spaces-carousel-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .spaces-carousel-arrow.prev {
+            left: 1rem;
+        }
+
+        .spaces-carousel-arrow.next {
+            right: 1rem;
+        }
+
+        .spaces-carousel-indicators {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.75rem;
+            z-index: 10;
+        }
+
+        .spaces-carousel-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .spaces-carousel-dot:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
+        }
+
+        .spaces-carousel-dot.active {
+            background-color: var(--primary-color);
+            border-color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+            .spaces-carousel {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .spaces-carousel-slide {
+                flex-direction: column;
+            }
+
+            .spaces-carousel-image {
+                flex: 0 0 250px;
+                min-height: 250px;
+            }
+
+            .spaces-carousel-content {
+                flex: 0 0 auto;
+                padding: 1.5rem;
+                min-height: auto;
+            }
+
+            .spaces-carousel-content h3 {
+                font-size: 1.5rem;
+            }
+
+            .spaces-carousel-content p {
+                font-size: 0.95rem;
+            }
+
+            .spaces-carousel-arrow {
+                padding: 0.75rem 1rem;
+                font-size: 1.5rem;
+            }
+
+            .spaces-carousel-arrow.prev {
+                left: 0.5rem;
+            }
+
+            .spaces-carousel-arrow.next {
+                right: 0.5rem;
+            }
+        }
+
+        /* NAVBAR ATIVA */
+        .navbar-menu a.active {
+            color: var(--primary-color) !important;
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="navbar">
+            <a href="/" class="navbar-brand">
+                CajuHub
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="#inicio" class="nav-link active">Início</a></li>
+                <li><a href="#sobre" class="nav-link">Sobre</a></li>
+                <li><a href="#salas" class="nav-link">Salas</a></li>
+            </ul>
+            <div class="navbar-auth" id="user-menu-container">
+                <a href="/login.html" class="btn btn-primary">Login Usuário</a>
+                <a href="/admin-login.html" class="btn btn-secondary">Login Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ALERTS -->
+    <div id="alerts-container" style="position: fixed; top: 80px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+    <!-- HERO SECTION COM CARROSSEL -->
+    <section class="hero" id="inicio">
+        <!-- CARROSSEL DE FOTOS -->
+        <div class="carousel-container">
+            <div class="carousel">
+                <div class="carousel-slide fade">
+                    <img src="assets\fa_lucas-6415-1-1024x683.webp" alt="Sala de Reunião Moderna">
+                </div>
+                <div class="carousel-slide fade">
+                    <img src="assets\fa_lucas-6423-1-683x1024.webp" alt="Espaço de Trabalho">
+                </div>
+                <div class="carousel-slide fade">
+                    <img src="assets\fa_lucas-6429-1-1024x683.webp" alt="Área de Eventos">
+                </div>
+
+                <!-- Controles do Carrossel -->
+                <a class="carousel-prev" onclick="changeSlide(-1)">&#10094;</a>
+                <a class="carousel-next" onclick="changeSlide(1)">&#10095;</a>
+            </div>
+
+            <!-- Indicadores de Slide -->
+            <div class="carousel-indicators">
+                <span class="indicator" onclick="currentSlide(1)"></span>
+                <span class="indicator" onclick="currentSlide(2)"></span>
+                <span class="indicator" onclick="currentSlide(3)"></span>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO DO HERO -->
+        <div class="hero-content">
+            <h1>Bem-vindo ao Cajuhub</h1>
+            <p>Espaços modernos e versáteis na orla de Aracaju para suas reuniões, eventos e workshops</p>
+            <a href="#salas" class="btn btn-primary" style="margin-right: 1rem;">Ver Salas</a>
+            <a href="/login.html" class="btn btn-secondary">Fazer Reserva</a>
+        </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section container" id="sobre">
+        <div class="section-title">Sobre o Cajuhub</div>
+        <div class="card">
+            <div class="card-body">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-light);">
+                    O Caju Hub é um espaço inovador que transforma a experiência de trabalho colaborativo. Com um design
+                    contemporâneo, prioriza transparência e fluidez, permitindo a entrada de luz natural e criando um
+                    ambiente
+                    acolhedor e inspirador.
+
+                    Oferece áreas de co-working flexíveis, salas de reunião equipadas com tecnologia moderna, uma
+                    cafeteria
+                    criativa e uma área de eventos multifuncional, todos projetados para promover a interação e o
+                    intercâmbio de
+                    ideias.
+
+                    Comprometido com a sustentabilidade, o hub incorpora soluções ecológicas, como painéis solares e
+                    sistemas de
+                    reutilização de água. Mais do que um simples espaço de trabalho, o Caju Hub é um convite à inovação
+                    e à
+                    colaboração, ideal para transformar ideias em realidade. Venha descobrir o potencial deste ambiente
+                    dinâmico!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SALAS - CARROSSEL -->
+    <section class="section container" id="salas">
+        <div class="section-title">Nossas Salas</div>
+
+        <div id="spaces-carousel-wrapper" style="display: none;">
+            <div class="spaces-carousel-container">
+                <div class="spaces-carousel" id="spaces-carousel">
+                    <!-- Slides inseridos aqui via JavaScript -->
+                </div>
+
+                <!-- Controles de Navegação -->
+                <button class="spaces-carousel-arrow prev" onclick="previousSpace()"
+                    title="Sala anterior">&#10094;</button>
+                <button class="spaces-carousel-arrow next" onclick="nextSpace()" title="Próxima sala">&#10095;</button>
+
+                <!-- Indicadores -->
+                <div class="spaces-carousel-indicators" id="spaces-indicators">
+                    <!-- Indicadores inseridos aqui via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Salas (fallback) -->
+        <div class="grid grid-3" id="spaces-container">
+            <div style="text-align: center; padding: 2rem;">
+                <div class="loading"></div>
+                <p>Carregando salas...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="background-color: var(--primary-color); color: var(--white); padding: 2rem 0;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; text-align: center;">
+            <div class="grid grid-3" style="text-align: left; margin-bottom: 1.5rem;">
+                <div style="padding: 1rem;">
+                    <h4 style="margin-bottom: 0.5rem; font-weight: 600;">Localização</h4>
+                    <p>CajuHub</p>
+                    <p>Orla de Aracaju</p>
+                    <p>Aracaju, SE - Brasil</p>
+                </div>
+                <div style="padding: 1rem;">
+                    <h4 style="margin-bottom: 0.5rem; font-weight: 600;">Contato</h4>
+                    <p>Telefone: (79) 98765-4321</p>
+                    <p>Email: contato@cajuhub.com</p>
+                </div>
+                <div style="padding: 1rem;">
+                    <h4 style="margin-bottom: 0.5rem; font-weight: 600;">Horário</h4>
+                    <p>Seg-Sex: 08:00 - 22:00</p>
+                    <p>Sáb-Dom: Fechado</p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 1rem;">
+                <p>&copy; 2025 Cajuhub. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/carousel.js"></script>
+    <script>
+        let currentSpaceIndex = 0;
+        let spaces = [];
+
+        // =====================================================================
+        // NAVBAR DINÂMICA
+        // =====================================================================
+        window.addEventListener('scroll', () => {
+            updateActiveNavLink();
+        });
+
+        function updateActiveNavLink() {
+            const navLinks = document.querySelectorAll('.navbar-menu .nav-link');
+            const sections = [
+                { id: 'inicio', link: navLinks[0] },
+                { id: 'sobre', link: navLinks[1] },
+                { id: 'salas', link: navLinks[2] }
+            ];
+
+            let currentSection = 'inicio';
+
+            for (const section of sections) {
+                const element = document.getElementById(section.id);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= 100) {
+                        currentSection = section.id;
+                    }
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeLink = sections.find(s => s.id === currentSection);
+            if (activeLink && activeLink.link) {
+                activeLink.link.classList.add('active');
+            }
+        }
+
+        // =====================================================================
+        // CARROSSEL DE SALAS
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSpacesCarousel();
+            updateActiveNavLink();
+        });
+
+        async function loadSpacesCarousel() {
+            try {
+                spaces = await getSpaces();
+
+                if (spaces.length === 0) {
+                    document.getElementById('spaces-carousel-wrapper').style.display = 'none';
+                    loadSpacesGrid();
+                    return;
+                }
+
+                // Mostrar carrossel
+                document.getElementById('spaces-carousel-wrapper').style.display = 'block';
+                document.getElementById('spaces-container').style.display = 'none';
+
+                // Renderizar slides
+                const carousel = document.getElementById('spaces-carousel');
+                carousel.innerHTML = spaces.map((space, index) => `
+                    <div class="spaces-carousel-slide ${index === 0 ? 'active' : ''}">
+                        <div class="spaces-carousel-image">
+                            <img src="${space.image_url.replace(/\\/g, '/')}" alt="${space.name}">
+                        </div>
+                        <div class="spaces-carousel-content">
+                            <div>
+                                <h3>${space.name}</h3>
+                                <p>${space.description || 'Espaço versátil para suas necessidades'}</p>
+                            </div>
+                            <div class="spaces-carousel-info">
+                                <p><strong>Capacidade:</strong> ${space.capacity} pessoas</p>
+                                <p><strong>Tamanho:</strong> ${space.size || 'N/A'}</p>
+                                <p><strong>Valor:</strong> ${formatCurrency(space.price_per_shift)}/turno</p>
+                                ${space.amenities && space.amenities.length > 0 ? `
+                                    <p><strong>Comodidades:</strong> ${space.amenities.join(', ')}</p>
+                                ` : ''}
+                            </div>
+                            <button class="btn btn-primary spaces-carousel-button" onclick="selectSpaceForReservation(${space.id})">
+                                Reservar Agora
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Renderizar indicadores
+                const indicators = document.getElementById('spaces-indicators');
+                indicators.innerHTML = spaces.map((_, index) => `
+                    <button class="spaces-carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToSpace(${index})" title="Sala ${index + 1}"></button>
+                `).join('');
+
+            } catch (error) {
+                console.error('Erro ao carregar salas:', error);
+                loadSpacesGrid();
+            }
+        }
+
+        function nextSpace() {
+            currentSpaceIndex = (currentSpaceIndex + 1) % spaces.length;
+            updateSpaceCarousel();
+        }
+
+        function previousSpace() {
+            currentSpaceIndex = (currentSpaceIndex - 1 + spaces.length) % spaces.length;
+            updateSpaceCarousel();
+        }
+
+        function goToSpace(index) {
+            currentSpaceIndex = index;
+            updateSpaceCarousel();
+        }
+
+        function updateSpaceCarousel() {
+            const slides = document.querySelectorAll('.spaces-carousel-slide');
+            const dots = document.querySelectorAll('.spaces-carousel-dot');
+
+            // Remover classe active de todos os slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Adicionar classe active apenas ao slide atual
+            if (slides[currentSpaceIndex]) {
+                slides[currentSpaceIndex].classList.add('active');
+            }
+
+            // Remover classe active de todos os dots
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+
+            // Adicionar classe active apenas ao dot atual
+            if (dots[currentSpaceIndex]) {
+                dots[currentSpaceIndex].classList.add('active');
+            }
+        }
+
+        async function loadSpacesGrid() {
+            const container = document.getElementById('spaces-container');
+
+            try {
+                if (spaces.length === 0) {
+                    spaces = await getSpaces();
+                }
+
+                if (spaces.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">Nenhuma sala disponível no momento.</p>';
+                    return;
+                }
+
+                container.innerHTML = spaces
+                    .map(space => `
+                        <div class="card">
+                            <div class="card-header">${space.name}</div>
+                            <div class="card-body">
+                                <p><strong>Descrição:</strong> ${space.description || 'N/A'}</p>
+                                <p><strong>Capacidade:</strong> ${space.capacity} pessoas</p>
+                                <p><strong>Tamanho:</strong> ${space.size || 'N/A'}</p>
+                                <p><strong>Valor:</strong> ${formatCurrency(space.price_per_shift)}/turno</p>
+                                ${space.amenities && space.amenities.length > 0 ? `
+                                    <p><strong>Comodidades:</strong> ${space.amenities.join(', ')}</p>
+                                ` : ''}
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary" onclick="selectSpaceForReservation(${space.id})">
+                                    Reservar
+                                </button>
+                            </div>
+                        </div>
+                    `)
+                    .join('');
+            } catch (error) {
+                container.innerHTML = '<div class="alert alert-danger">Erro ao carregar salas</div>';
+            }
+        }
+
+        // Suporte a teclado para o carrossel
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('spaces-carousel-wrapper').style.display === 'block') {
+                if (e.key === 'ArrowLeft') previousSpace();
+                if (e.key === 'ArrowRight') nextSpace();
+            }
+        });
+    </script>
+</body>
+
+</html>

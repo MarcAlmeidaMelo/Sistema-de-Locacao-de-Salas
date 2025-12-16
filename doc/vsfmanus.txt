@@ -1,0 +1,1763 @@
+index
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cajuhub - Sistema de Locação de Salas</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="navbar">
+      <a href="/" class="navbar-brand">
+        🏢 Cajuhub
+      </a>
+      <ul class="navbar-menu">
+        <li><a href="/" class="active">Início</a></li>
+        <li><a href="#salas">Salas</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+      <div class="navbar-auth" id="user-menu-container">
+        <a href="/login.html" class="btn btn-primary">Login Usuário</a>
+        <a href="/admin-login.html" class="btn btn-secondary">Login Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 80px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Bem-vindo ao Cajuhub</h1>
+      <p>Espaços modernos e versáteis na orla de Aracaju para suas reuniões, eventos e workshops</p>
+      <a href="#salas" class="btn btn-primary" style="margin-right: 1rem;">Ver Salas</a>
+      <a href="/login.html" class="btn btn-secondary">Fazer Reserva</a>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="section container">
+    <div class="section-title">Sobre o Cajuhub</div>
+    <div class="card">
+      <div class="card-body">
+        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-light);">
+          O Caju Hub é um espaço inovador que transforma a experiência de trabalho colaborativo. Com um design
+          contemporâneo, prioriza transparência e fluidez, permitindo a entrada de luz natural e criando um ambiente
+          acolhedor e inspirador.
+
+          Oferece áreas de co-working flexíveis, salas de reunião equipadas com tecnologia moderna, uma cafeteria
+          criativa e uma área de eventos multifuncional, todos projetados para promover a interação e o intercâmbio de
+          ideias.
+
+          Comprometido com a sustentabilidade, o hub incorpora soluções ecológicas, como painéis solares e sistemas de
+          reutilização de água. Mais do que um simples espaço de trabalho, o Caju Hub é um convite à inovação e à
+          colaboração, ideal para transformar ideias em realidade. Venha descobrir o potencial deste ambiente dinâmico!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALAS -->
+  <section class="section container" id="salas">
+    <div class="section-title">Nossas Salas</div>
+    <div class="grid grid-3" id="spaces-container">
+      <div style="text-align: center; padding: 2rem;">
+        <div class="loading"></div>
+        <p>Carregando salas...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section class="section container" id="contato"
+    style="background-color: var(--light-bg); padding: 3rem 0; margin: 0 -2rem;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+      <div class="section-title">Contato</div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-header">📍 Localização</div>
+          <div class="card-body">
+            <p><strong>Cajuhub</strong></p>
+            <p>Orla de Aracaju</p>
+            <p>Aracaju, SE - Brasil</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">📞 Contato</div>
+          <div class="card-body">
+            <p><strong>Telefone:</strong> (79) 98765-4321</p>
+            <p><strong>Email:</strong> contato@cajuhub.com</p>
+            <p><strong>Horário:</strong> Seg-Sex 08:00 - 22:00</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background-color: var(--primary-color); color: var(--white); text-align: center; padding: 2rem;">
+    <p>&copy; 2025 Cajuhub. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
+
+
+login
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    }
+
+    .login-card {
+      background-color: var(--white);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      color: var(--text-light);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--text-light);
+    }
+
+    .login-footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🏢 Cajuhub</h1>
+        <p>Login de Usuário</p>
+      </div>
+
+      <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required placeholder="Sua senha">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.8rem; font-size: 1rem;">
+          Entrar
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>É administrador? <a href="/admin-login.html">Login Admin</a></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+          <a href="/">← Voltar para início</a>
+        </p>
+      </div>
+
+      <!-- DADOS DE TESTE -->
+      <div
+        style="background-color: var(--light-bg); padding: 1rem; border-radius: 4px; margin-top: 1.5rem; font-size: 0.85rem;">
+        <p style="font-weight: 600; margin-bottom: 0.5rem;">📝 Dados de Teste:</p>
+        <p><strong>Email:</strong> usuario@example.com</p>
+        <p><strong>Senha:</strong> user123</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    /* ===========================
+       FUNÇÕES UTILITÁRIAS
+    =========================== */
+
+    // Validação de email
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Validação de senha
+    function validatePassword(password) {
+      return password.length >= 6;
+    }
+
+    // Exibir alertas
+    function showAlert(message, type = 'danger') {
+      const container = document.getElementById('alerts-container');
+      if (!container) return;
+
+      const alert = document.createElement('div');
+      alert.style.padding = '12px';
+      alert.style.marginBottom = '10px';
+      alert.style.borderRadius = '6px';
+      alert.style.color = '#fff';
+      alert.style.background =
+        type === 'success' ? '#16a34a' :
+          type === 'warning' ? '#f59e0b' : '#dc2626';
+
+      alert.textContent = message;
+      container.appendChild(alert);
+
+      setTimeout(() => alert.remove(), 4000);
+    }
+
+    /* ===========================
+       LOGIN
+    =========================== */
+
+    async function login(email, password) {
+      console.log('📤 Enviando login:', email);
+
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      });
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (e) { }
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao fazer login');
+      }
+
+      return data;
+    }
+
+    /* ===========================
+       EVENTO DO FORMULÁRIO
+    =========================== */
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      console.log('🟢 Submit disparado');
+
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+
+      if (!emailInput || !passwordInput) {
+        showAlert('Erro interno no formulário');
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!validateEmail(email)) {
+        showAlert('Email inválido');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        showAlert('Senha deve ter no mínimo 6 caracteres');
+        return;
+      }
+
+      try {
+        await login(email, password);
+        showAlert('Login realizado com sucesso!', 'success');
+
+        setTimeout(() => {
+          window.location.href = '/user-dashboard.html';
+        }, 800);
+      } catch (error) {
+        console.error(error);
+        showAlert(error.message || 'Falha no login');
+      }
+    }
+
+    /* ===========================
+       VERIFICAÇÃO DE SESSÃO
+    =========================== */
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🔄 Verificando sessão');
+
+      try {
+        const response = await fetch('/api/auth/check-session', {
+          credentials: 'include'
+        });
+
+        if (!response.ok) return;
+
+        const session = await response.json();
+
+        if (session.authenticated) {
+          window.location.href =
+            session.user.role === 'admin'
+              ? '/admin-dashboard.html'
+              : '/user-dashboard.html';
+        }
+      } catch (e) {
+        console.warn('Sessão não verificada');
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>
+
+
+admin-login
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Admin - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    }
+
+    .login-card {
+      background-color: var(--white);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      color: var(--text-light);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--text-light);
+    }
+
+    .login-footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: var(--white);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🏢 Cajuhub</h1>
+        <div class="admin-badge">👨‍💼 ADMINISTRADOR</div>
+        <p>Login Administrativo</p>
+      </div>
+
+      <form class="login-form" id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required placeholder="Sua senha">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.8rem; font-size: 1rem;">
+          Entrar como Admin
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Usuário comum? <a href="/login.html">Login Usuário</a></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+          <a href="/">← Voltar para início</a>
+        </p>
+      </div>
+
+      <!-- DADOS DE TESTE -->
+      <div
+        style="background-color: var(--light-bg); padding: 1rem; border-radius: 4px; margin-top: 1.5rem; font-size: 0.85rem;">
+        <p style="font-weight: 600; margin-bottom: 0.5rem;">📝 Dados de Teste:</p>
+        <p><strong>Email:</strong> admin@cajuhub.com</p>
+        <p><strong>Senha:</strong> admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    // Função para validar email
+    function validateEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    }
+
+    // Função para validar a senha
+    function validatePassword(password) {
+      return password.length >= 6;  // Senha com no mínimo 6 caracteres
+    }
+
+    // Função para fazer o login
+    async function login(email, password, isAdmin) {
+      const url = isAdmin ? '/api/auth/admin-login' : '/api/auth/login';  // Ajuste conforme sua API
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        showAlert(data.error || 'Erro ao fazer login', 'danger');
+        throw new Error('Falha no login');
+      }
+
+      const data = await response.json();
+      // Aqui você pode salvar o token ou outra informação de sessão no cookie/localStorage
+      return data;
+    }
+
+    // Função para verificar a sessão
+    async function checkSession() {
+      const response = await fetch('/api/auth/check-session', {
+        method: 'GET',
+        credentials: 'include'  // Assumindo que está usando cookies para sessão
+      });
+
+      const data = await response.json();
+      return data;  // Retorna a sessão do usuário (ex: { authenticated: true, user: { role: 'admin' } })
+    }
+
+    // Função para mostrar alertas
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alerts-container');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.innerText = message;
+      alertContainer.appendChild(alert);
+
+      // Auto-destroy after 5 seconds
+      setTimeout(() => {
+        alert.remove();
+      }, 5000);
+    }
+
+    // Função para lidar com o login do admin
+    async function handleAdminLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!validateEmail(email)) {
+        showAlert('Email inválido', 'danger');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        showAlert('Senha deve ter no mínimo 6 caracteres', 'danger');
+        return;
+      }
+
+      try {
+        await login(email, password, true);
+        setTimeout(() => {
+          window.location.href = '/admin-dashboard.html';
+        }, 1000);
+      } catch (error) {
+        // Erro já foi exibido pelo showAlert
+      }
+    }
+
+    // Verificar se já está autenticado
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+      if (session.authenticated) {
+        if (session.user.role === 'admin') {
+          window.location.href = '/admin-dashboard.html';
+        } else {
+          window.location.href = '/user-dashboard.html';
+        }
+      }
+    });
+  </script>
+
+  </script>
+</body>
+
+</html>
+
+admin dashboard
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div style="padding: 0 1.5rem; margin-bottom: 2rem;">
+        <h2 style="color: var(--white); margin-bottom: 0.5rem;">🏢 Cajuhub</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">👨‍💼 Painel Admin</p>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showSection('reservations')">📅 Reservas</a></li>
+        <li><a href="#" onclick="showSection('spaces')">🏢 Salas</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Painel Administrativo</h1>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Carregando...</span>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- SEÇÃO: RESERVAS -->
+      <section id="section-reservations" style="display: block;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Todas as Reservas</h2>
+        <div id="reservations-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando reservas...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: SALAS -->
+      <section id="section-spaces" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="color: var(--primary-color);">Gerenciar Salas</h2>
+          <button class="btn btn-success" onclick="showNewSpaceModal()">➕ Nova Sala</button>
+        </div>
+
+        <div id="spaces-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando salas...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: NOVA/EDITAR SALA -->
+  <div id="space-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modal-title">Nova Sala</span>
+        <button class="modal-close" onclick="closeSpaceModal()">×</button>
+      </div>
+
+      <form id="space-form" onsubmit="handleSpaceSubmit(event)">
+        <div class="form-group">
+          <label for="space-name">Nome da Sala</label>
+          <input type="text" id="space-name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="space-description">Descrição</label>
+          <textarea id="space-description"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="space-size">Tamanho</label>
+            <input type="text" id="space-size" placeholder="Ex: 50m²">
+          </div>
+          <div class="form-group">
+            <label for="space-capacity">Capacidade</label>
+            <input type="number" id="space-capacity" required min="1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="space-price">Valor por Turno (R$)</label>
+          <input type="number" id="space-price" required min="0" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="space-amenities">Comodidades (separadas por vírgula)</label>
+          <input type="text" id="space-amenities" placeholder="Wi-Fi, Projetor, Ar-condicionado...">
+        </div>
+
+        <div class="form-group">
+          <label for="space-active">
+            <input type="checkbox" id="space-active" checked>
+            Sala ativa
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">Salvar</button>
+          <button type="button" class="btn btn-secondary" onclick="closeSpaceModal()" style="flex: 1;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let currentEditingSpaceId = null;
+
+    // Verificar autenticação
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+
+      if (!session.authenticated) {
+        window.location.href = '/admin-login.html';
+        return;
+      }
+
+      if (session.user.role !== 'admin') {
+        window.location.href = '/user-dashboard.html';
+        return;
+      }
+
+      // Atualizar nome do usuário
+      document.getElementById('user-name').textContent = `Olá, ${session.user.name}`;
+
+      // Carregar reservas
+      await loadReservations();
+    });
+
+    async function loadReservations() {
+      const container = document.getElementById('reservations-container');
+      try {
+        const reservations = await getReservations();
+
+        if (reservations.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-body" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-light);">Nenhuma reserva registrada.</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sala</th>
+                  <th>Usuário</th>
+                  <th>Data</th>
+                  <th>Turno</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reservations.map(r => `
+                  <tr>
+                    <td>${r.space_name}</td>
+                    <td>${r.user_id}</td>
+                    <td>${formatDate(r.reservation_date)}</td>
+                    <td>${formatShift(r.shift)}</td>
+                    <td>
+                      <span class="reservation-status ${r.status}">
+                        ${r.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                      </span>
+                    </td>
+                    <td>
+                      ${r.status === 'confirmed' ? `
+                        <button class="btn btn-danger btn-small" onclick="confirmCancelReservation(${r.id})">
+                          Cancelar
+                        </button>
+                      ` : '-'}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar reservas</div>`;
+      }
+    }
+
+    async function loadSpaces() {
+      const container = document.getElementById('spaces-container');
+      try {
+        const spaces = await getSpaces();
+
+        container.innerHTML = `
+          <div class="grid grid-2">
+            ${spaces.map(space => `
+              <div class="card">
+                <div class="card-header">${space.name}</div>
+                <div class="card-body">
+                  <p><strong>Descrição:</strong> ${space.description || 'N/A'}</p>
+                  <p><strong>Tamanho:</strong> ${space.size || 'N/A'}</p>
+                  <p><strong>Capacidade:</strong> ${space.capacity} pessoas</p>
+                  <p><strong>Valor:</strong> ${formatCurrency(space.price_per_shift)}/turno</p>
+                  <p><strong>Status:</strong> ${space.is_active ? '✓ Ativa' : '✗ Inativa'}</p>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-primary btn-small" onclick="editSpace(${space.id})">
+                    Editar
+                  </button>
+                  <button class="btn btn-danger btn-small" onclick="toggleSpaceStatus(${space.id}, ${space.is_active})">
+                    ${space.is_active ? 'Desativar' : 'Ativar'}
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar salas</div>`;
+      }
+    }
+
+    function showSection(sectionName) {
+      // Ocultar todas as seções
+      document.getElementById('section-reservations').style.display = 'none';
+      document.getElementById('section-spaces').style.display = 'none';
+
+      // Mostrar seção selecionada
+      if (sectionName === 'reservations') {
+        document.getElementById('section-reservations').style.display = 'block';
+        loadReservations();
+      } else if (sectionName === 'spaces') {
+        document.getElementById('section-spaces').style.display = 'block';
+        loadSpaces();
+      }
+
+      // Atualizar menu ativo
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function showNewSpaceModal() {
+      currentEditingSpaceId = null;
+      document.getElementById('modal-title').textContent = 'Nova Sala';
+      document.getElementById('space-form').reset();
+      document.getElementById('space-modal').classList.add('active');
+    }
+
+    async function editSpace(spaceId) {
+      try {
+        const space = await getSpace(spaceId);
+        currentEditingSpaceId = spaceId;
+
+        document.getElementById('modal-title').textContent = 'Editar Sala';
+        document.getElementById('space-name').value = space.name;
+        document.getElementById('space-description').value = space.description || '';
+        document.getElementById('space-size').value = space.size || '';
+        document.getElementById('space-capacity').value = space.capacity;
+        document.getElementById('space-price').value = space.price_per_shift;
+        document.getElementById('space-amenities').value = space.amenities.join(', ');
+        document.getElementById('space-active').checked = space.is_active;
+
+        document.getElementById('space-modal').classList.add('active');
+      } catch (error) {
+        showAlert('Erro ao carregar sala', 'danger');
+      }
+    }
+
+    function closeSpaceModal() {
+      document.getElementById('space-modal').classList.remove('active');
+      currentEditingSpaceId = null;
+    }
+
+    async function handleSpaceSubmit(event) {
+      event.preventDefault();
+
+      const spaceData = {
+        name: document.getElementById('space-name').value,
+        description: document.getElementById('space-description').value,
+        size: document.getElementById('space-size').value,
+        capacity: parseInt(document.getElementById('space-capacity').value),
+        price_per_shift: parseFloat(document.getElementById('space-price').value),
+        amenities: document.getElementById('space-amenities').value
+          .split(',')
+          .map(a => a.trim())
+          .filter(a => a),
+        is_active: document.getElementById('space-active').checked
+      };
+
+      try {
+        if (currentEditingSpaceId) {
+          await updateSpace(currentEditingSpaceId, spaceData);
+        } else {
+          await createSpace(spaceData);
+        }
+
+        closeSpaceModal();
+        await loadSpaces();
+      } catch (error) {
+        // Erro já foi exibido
+      }
+    }
+
+    async function toggleSpaceStatus(spaceId, currentStatus) {
+      try {
+        const space = await getSpace(spaceId);
+        space.is_active = !currentStatus;
+        await updateSpace(spaceId, space);
+        await loadSpaces();
+      } catch (error) {
+        showAlert('Erro ao atualizar sala', 'danger');
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+user dashboard
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Painel - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div style="padding: 0 1.5rem; margin-bottom: 2rem;">
+        <h2 style="color: var(--white); margin-bottom: 0.5rem;">🏢 Cajuhub</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Painel do Usuário</p>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showSection('reservations')">📅 Minhas Reservas</a></li>
+        <li><a href="#" onclick="showSection('new-reservation')">➕ Nova Reserva</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Painel do Usuário</h1>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Carregando...</span>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- SEÇÃO: MINHAS RESERVAS -->
+      <section id="section-reservations" style="display: block;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Minhas Reservas</h2>
+        <div id="reservations-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando reservas...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: NOVA RESERVA -->
+      <section id="section-new-reservation" style="display: none;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Criar Nova Reserva</h2>
+
+        <div class="grid grid-2">
+          <!-- SELEÇÃO DE SALA -->
+          <div class="card">
+            <div class="card-header">Selecione a Sala</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="space-select">Sala</label>
+                <select id="space-select" onchange="onSpaceSelected()">
+                  <option value="">-- Selecione uma sala --</option>
+                </select>
+              </div>
+              <div id="space-details" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <p><strong>Capacidade:</strong> <span id="space-capacity">-</span> pessoas</p>
+                <p><strong>Tamanho:</strong> <span id="space-size">-</span></p>
+                <p><strong>Valor por turno:</strong> <span id="space-price">-</span></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SELEÇÃO DE DATA E TURNO -->
+          <div class="card">
+            <div class="card-header">Data e Turno</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="shift-select">Turno</label>
+                <select id="shift-select">
+                  <option value="">-- Selecione um turno --</option>
+                  <option value="morning">Manhã (08:00 - 12:00)</option>
+                  <option value="afternoon">Tarde (13:00 - 17:00)</option>
+                  <option value="evening">Noite (18:00 - 22:00)</option>
+                </select>
+              </div>
+              <div id="calendar-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OBSERVAÇÕES E BOTÃO DE RESERVA -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">Detalhes da Reserva</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="notes">Observações (opcional)</label>
+              <textarea id="notes" placeholder="Adicione observações sobre sua reserva..."></textarea>
+            </div>
+
+            <div style="background-color: var(--light-bg); padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+              <p><strong>Data selecionada:</strong> <span id="selected-date-display">Nenhuma data selecionada</span></p>
+              <p><strong>Turno selecionado:</strong> <span id="selected-shift-display">Nenhum turno selecionado</span></p>
+              <p><strong>Valor:</strong> <span id="reservation-total">R$ 0,00</span></p>
+            </div>
+
+            <button class="btn btn-success" style="width: 100%; padding: 1rem;" onclick="submitReservation()">
+              ✓ Confirmar Reserva
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/calendar.js"></script>
+  <script>
+    let calendar = null;
+    let selectedSpace = null;
+    let selectedDate = null;
+    let selectedShift = null;
+
+    // Verificar autenticação
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+
+      if (!session.authenticated) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      if (session.user.role === 'admin') {
+        window.location.href = '/admin-dashboard.html';
+        return;
+      }
+
+      // Atualizar nome do usuário
+      document.getElementById('user-name').textContent = `Olá, ${session.user.name}`;
+
+      // Carregar reservas
+      await loadReservations();
+
+      // Carregar espaços
+      await loadSpaces();
+
+      // Verificar se há espaço selecionado
+      const selectedSpaceId = localStorage.getItem('selectedSpaceId');
+      if (selectedSpaceId) {
+        document.getElementById('space-select').value = selectedSpaceId;
+        await onSpaceSelected();
+        showSection('new-reservation');
+        localStorage.removeItem('selectedSpaceId');
+      }
+    });
+
+    async function loadReservations() {
+      const container = document.getElementById('reservations-container');
+      try {
+        const reservations = await getReservations();
+
+        if (reservations.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-body" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Você ainda não tem reservas.</p>
+                <button class="btn btn-primary" onclick="showSection('new-reservation')">
+                  Criar Primeira Reserva
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = reservations
+          .map(reservation => renderReservationCard(reservation))
+          .join('');
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar reservas</div>`;
+      }
+    }
+
+    async function loadSpaces() {
+      const select = document.getElementById('space-select');
+      try {
+        const spaces = await getSpaces();
+        const options = spaces
+          .map(space => `<option value="${space.id}" data-price="${space.price_per_shift}">${space.name}</option>`)
+          .join('');
+
+        select.innerHTML = '<option value="">-- Selecione uma sala --</option>' + options;
+      } catch (error) {
+        select.innerHTML = '<option value="">Erro ao carregar salas</option>';
+      }
+    }
+
+    async function onSpaceSelected() {
+      const spaceId = document.getElementById('space-select').value;
+
+      if (!spaceId) {
+        document.getElementById('space-details').style.display = 'none';
+        return;
+      }
+
+      try {
+        const space = await getSpace(spaceId);
+        selectedSpace = space;
+
+        // Atualizar detalhes
+        document.getElementById('space-capacity').textContent = space.capacity;
+        document.getElementById('space-size').textContent = space.size || 'N/A';
+        document.getElementById('space-price').textContent = formatCurrency(space.price_per_shift);
+        document.getElementById('space-details').style.display = 'block';
+
+        // Criar calendário
+        const calendarContainer = document.getElementById('calendar-container');
+        calendarContainer.innerHTML = '<div id="calendar"></div>';
+
+        calendar = new Calendar('calendar', {
+          onDateSelect: onDateSelected,
+          minDate: new Date(),
+          maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+        });
+
+        updateReservationTotal();
+      } catch (error) {
+        showAlert('Erro ao carregar detalhes da sala', 'danger');
+      }
+    }
+
+    async function onDateSelected(dateStr) {
+      selectedDate = dateStr;
+      document.getElementById('selected-date-display').textContent = formatDate(dateStr);
+      updateReservationTotal();
+    }
+
+    function showSection(sectionName) {
+      // Ocultar todas as seções
+      document.getElementById('section-reservations').style.display = 'none';
+      document.getElementById('section-new-reservation').style.display = 'none';
+
+      // Mostrar seção selecionada
+      if (sectionName === 'reservations') {
+        document.getElementById('section-reservations').style.display = 'block';
+        loadReservations();
+      } else if (sectionName === 'new-reservation') {
+        document.getElementById('section-new-reservation').style.display = 'block';
+      }
+
+      // Atualizar menu ativo
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function updateReservationTotal() {
+      const shiftSelect = document.getElementById('shift-select');
+      selectedShift = shiftSelect.value;
+
+      document.getElementById('selected-shift-display').textContent = 
+        selectedShift ? formatShift(selectedShift) : 'Nenhum turno selecionado';
+
+      if (selectedSpace && selectedShift) {
+        document.getElementById('reservation-total').textContent = 
+          formatCurrency(selectedSpace.price_per_shift);
+      } else {
+        document.getElementById('reservation-total').textContent = 'R$ 0,00';
+      }
+    }
+
+    document.getElementById('shift-select').addEventListener('change', updateReservationTotal);
+
+    async function submitReservation() {
+      if (!selectedSpace || !selectedDate || !selectedShift) {
+        showAlert('Por favor, selecione sala, data e turno', 'warning');
+        return;
+      }
+
+      const notes = document.getElementById('notes').value;
+
+      try {
+        await createReservation({
+          space_id: selectedSpace.id,
+          reservation_date: selectedDate,
+          shift: selectedShift,
+          notes: notes || null
+        });
+
+        // Limpar formulário
+        document.getElementById('space-select').value = '';
+        document.getElementById('shift-select').value = '';
+        document.getElementById('notes').value = '';
+        selectedSpace = null;
+        selectedDate = null;
+        selectedShift = null;
+
+        // Voltar para reservas
+        setTimeout(() => {
+          showSection('reservations');
+        }, 1500);
+      } catch (error) {
+        // Erro já foi exibido pelo showAlert
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+db.js
+
+// =====================================================================
+// DATABASE CONNECTION - CAJUHUB
+// =====================================================================
+
+const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'cajuhub',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Testar conexão
+pool.getConnection()
+  .then(connection => {
+    console.log('✓ Conexão com banco de dados estabelecida com sucesso!');
+    connection.release();
+  })
+  .catch(err => {
+    console.error('✗ Erro ao conectar ao banco de dados:', err.message);
+    console.error('Certifique-se de que:');
+    console.error('1. O arquivo .env está configurado corretamente');
+    console.error('2. O servidor MySQL está rodando');
+    console.error('3. As credenciais estão corretas');
+  });
+
+module.exports = pool;
+
+
+server.js
+
+// =====================================================================
+// SERVER - CAJUHUB (CORRIGIDO)
+// =====================================================================
+
+const express = require('express');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
+
+const pool = require('./db');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// =====================================================================
+// MIDDLEWARES
+// =====================================================================
+
+// CORS COM SUPORTE A COOKIES (OBRIGATÓRIO PARA SESSÃO)
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Servir arquivos estáticos
+app.use(express.static(path.join(__dirname, '..')));
+
+// SESSÃO
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'seu_secret_aqui',
+  resave: false,
+  saveUninitialized: false, // CORREÇÃO IMPORTANTE
+  cookie: {
+    secure: false, // true em produção com HTTPS
+    maxAge: 1000 * 60 * 60 * 24
+  }
+}));
+
+// =====================================================================
+// MIDDLEWARES DE AUTENTICAÇÃO
+// =====================================================================
+
+function isAuthenticated(req, res, next) {
+  if (req.session.userId) return next();
+  return res.status(401).json({ error: 'Não autenticado' });
+}
+
+function isAdmin(req, res, next) {
+  if (req.session.userId && req.session.role === 'admin') return next();
+  return res.status(403).json({ error: 'Acesso negado. Apenas administrador.' });
+}
+
+// =====================================================================
+// ROTAS DE AUTENTICAÇÃO
+// =====================================================================
+
+// LOGIN USUÁRIO
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    }
+
+    const connection = await pool.getConnection();
+    const [users] = await connection.execute(
+      'SELECT id, email, password, name, role FROM users WHERE email = ?',
+      [email]
+    );
+    connection.release();
+
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Usuário não encontrado' });
+    }
+
+    const user = users[0];
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Senha incorreta' });
+    }
+
+    req.session.userId = user.id;
+    req.session.email = user.email;
+    req.session.name = user.name;
+    req.session.role = user.role;
+
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no login:', error);
+    res.status(500).json({ error: 'Erro ao fazer login' });
+  }
+});
+
+// LOGIN ADMIN
+app.post('/api/auth/admin-login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    }
+
+    const connection = await pool.getConnection();
+    const [users] = await connection.execute(
+      'SELECT id, email, password, name, role FROM users WHERE email = ? AND role = "admin"',
+      [email]
+    );
+    connection.release();
+
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Administrador não encontrado' });
+    }
+
+    const admin = users[0];
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Senha incorreta' });
+    }
+
+    req.session.userId = admin.id;
+    req.session.email = admin.email;
+    req.session.name = admin.name;
+    req.session.role = admin.role;
+
+    res.json({
+      success: true,
+      user: {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no login admin:', error);
+    res.status(500).json({ error: 'Erro ao fazer login admin' });
+  }
+});
+
+// LOGOUT
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.json({ success: true });
+  });
+});
+
+// VERIFICAR SESSÃO (ROTA CORRIGIDA + ALIAS)
+app.get('/api/auth/session', (req, res) => {
+  if (req.session.userId) {
+    res.json({
+      authenticated: true,
+      user: {
+        id: req.session.userId,
+        email: req.session.email,
+        name: req.session.name,
+        role: req.session.role
+      }
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
+// Alias para frontend antigo
+app.get('/api/auth/check-session', (req, res) => {
+  if (req.session.userId) {
+    res.json({
+      authenticated: true,
+      user: {
+        id: req.session.userId,
+        email: req.session.email,
+        name: req.session.name,
+        role: req.session.role
+      }
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
+// =====================================================================
+// ROTA RAIZ
+// =====================================================================
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
+// =====================================================================
+// INICIAR SERVIDOR
+// =====================================================================
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
+
+module.exports = app;
+
+
+calendar.js
+
+// =====================================================================
+// CALENDAR.JS - CAJUHUB
+// =====================================================================
+
+class Calendar {
+  constructor(elementId, options = {}) {
+    this.element = document.getElementById(elementId);
+    this.currentDate = new Date();
+    this.selectedDate = null;
+    this.bookedDates = options.bookedDates || [];
+    this.onDateSelect = options.onDateSelect || null;
+    this.minDate = options.minDate || new Date();
+    this.maxDate = options.maxDate || new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+
+    this.render();
+    this.attachEventListeners();
+  }
+
+  render() {
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    let html = `
+      <div class="calendar">
+        <div class="calendar-header">
+          <div style="font-size: 1.3rem; font-weight: 600;">
+            ${this.getMonthName(month)} ${year}
+          </div>
+          <div class="calendar-nav">
+            <button id="prev-month">← Anterior</button>
+            <button id="next-month">Próximo →</button>
+          </div>
+        </div>
+
+        <div class="calendar-weekdays">
+          <div class="weekday">Dom</div>
+          <div class="weekday">Seg</div>
+          <div class="weekday">Ter</div>
+          <div class="weekday">Qua</div>
+          <div class="weekday">Qui</div>
+          <div class="weekday">Sex</div>
+          <div class="weekday">Sab</div>
+        </div>
+
+        <div class="calendar-days">
+    `;
+
+    // Dias do mês anterior
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+      html += `<div class="calendar-day other-month">${prevMonthLastDay - i}</div>`;
+    }
+
+    // Dias do mês atual
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dateStr = this.formatDateString(date);
+      const isToday = this.isToday(date);
+      const isBooked = this.isDateBooked(dateStr);
+      const isDisabled = date < this.minDate || date > this.maxDate;
+      const isSelected = this.selectedDate && this.formatDateString(this.selectedDate) === dateStr;
+
+      let classes = 'calendar-day';
+      if (isToday) classes += ' today';
+      if (isBooked) classes += ' booked';
+      if (isSelected) classes += ' selected';
+
+      const onclick = isDisabled || isBooked ? '' : `onclick="this.calendar.selectDate(new Date(${date.getTime()}))"`;
+
+      html += `<div class="calendar-day ${classes}" ${onclick} style="${isDisabled || isBooked ? 'cursor: not-allowed; opacity: 0.5;' : ''}">${day}</div>`;
+    }
+
+    // Dias do próximo mês
+    const totalCells = Math.ceil((startingDayOfWeek + daysInMonth) / 7) * 7;
+    for (let day = 1; day <= totalCells - startingDayOfWeek - daysInMonth; day++) {
+      html += `<div class="calendar-day other-month">${day}</div>`;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+
+    this.element.innerHTML = html;
+
+    // Adicionar referência ao calendário para os botões
+    const calendarDays = this.element.querySelectorAll('.calendar-day');
+    calendarDays.forEach(day => {
+      day.calendar = this;
+    });
+  }
+
+  attachEventListeners() {
+    const prevBtn = this.element.querySelector('#prev-month');
+    const nextBtn = this.element.querySelector('#next-month');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+        this.render();
+        this.attachEventListeners();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+        this.render();
+        this.attachEventListeners();
+      });
+    }
+  }
+
+  selectDate(date) {
+    this.selectedDate = date;
+    this.render();
+    this.attachEventListeners();
+
+    if (this.onDateSelect) {
+      this.onDateSelect(this.formatDateString(date));
+    }
+  }
+
+  formatDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  isToday(date) {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  }
+
+  isDateBooked(dateStr) {
+    return this.bookedDates.includes(dateStr);
+  }
+
+  getMonthName(month) {
+    const months = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    return months[month];
+  }
+
+  setBookedDates(dates) {
+    this.bookedDates = dates;
+    this.render();
+    this.attachEventListeners();
+  }
+
+  getSelectedDate() {
+    return this.selectedDate ? this.formatDateString(this.selectedDate) : null;
+  }
+}
+
+// =====================================================================
+// INICIALIZAÇÃO DO CALENDÁRIO
+// =====================================================================
+
+function initializeCalendar(elementId, options = {}) {
+  return new Calendar(elementId, options);
+}
+
+
+app.js
+
+// =====================================================================
+// FRONTEND APP - CAJUHUB
+// =====================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Cajuhub frontend carregado');
+
+    // =========================
+    // LOGIN USUÁRIO
+    // =========================
+    const loginForm = document.getElementById('loginForm');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.error || 'Erro ao fazer login');
+                    return;
+                }
+
+                window.location.href = '/user-dashboard.html';
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão com o servidor');
+            }
+        });
+    }
+
+    // =========================
+    // LOGIN ADMIN
+    // =========================
+    const adminLoginForm = document.getElementById('adminLoginForm');
+
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/admin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.error || 'Erro ao fazer login admin');
+                    return;
+                }
+
+                window.location.href = '/admin-dashboard.html';
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão com o servidor');
+            }
+        });
+    }
+
+    // =========================
+    // LOGOUT
+    // =========================
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            window.location.href = '/login.html';
+        });
+    }
+});
+

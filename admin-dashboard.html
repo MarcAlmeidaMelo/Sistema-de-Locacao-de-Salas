@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div style="padding: 0 1.5rem; margin-bottom: 2rem;">
+        <h2 style="color: var(--white); margin-bottom: 0.5rem;">CajuHub</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">👨‍💼 Painel Admin</p>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showSection('reservations')">📅 Reservas</a></li>
+        <li><a href="#" onclick="showSection('spaces')">🏢 Salas</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Painel Administrativo</h1>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Carregando...</span>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- SEÇÃO: RESERVAS -->
+      <section id="section-reservations" style="display: block;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Todas as Reservas</h2>
+        <div id="reservations-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando reservas...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: SALAS -->
+      <section id="section-spaces" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="color: var(--primary-color);">Gerenciar Salas</h2>
+          <button class="btn btn-success" onclick="showNewSpaceModal()">➕ Nova Sala</button>
+        </div>
+
+        <div id="spaces-container">
+          <div style="text-align: center; padding: 2rem;">
+            <div class="loading"></div>
+            <p>Carregando salas...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: NOVA/EDITAR SALA -->
+  <div id="space-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modal-title">Nova Sala</span>
+        <button class="modal-close" onclick="closeSpaceModal()">×</button>
+      </div>
+
+      <form id="space-form" onsubmit="handleSpaceSubmit(event)">
+        <div class="form-group">
+          <label for="space-name">Nome da Sala</label>
+          <input type="text" id="space-name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="space-description">Descrição</label>
+          <textarea id="space-description"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="space-size">Tamanho</label>
+            <input type="text" id="space-size" placeholder="Ex: 50m²">
+          </div>
+          <div class="form-group">
+            <label for="space-capacity">Capacidade</label>
+            <input type="number" id="space-capacity" required min="1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="space-price">Valor por Turno (R$)</label>
+          <input type="number" id="space-price" required min="0" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="space-amenities">Comodidades (separadas por vírgula)</label>
+          <input type="text" id="space-amenities" placeholder="Wi-Fi, Projetor, Ar-condicionado...">
+        </div>
+
+        <div class="form-group">
+          <label for="space-active">
+            <input type="checkbox" id="space-active" checked>
+            Sala ativa
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">Salvar</button>
+          <button type="button" class="btn btn-secondary" onclick="closeSpaceModal()" style="flex: 1;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let currentEditingSpaceId = null;
+
+    // Verificar autenticação
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+
+      if (!session.authenticated) {
+        window.location.href = '/admin-login.html';
+        return;
+      }
+
+      if (session.user.role !== 'admin') {
+        window.location.href = '/user-dashboard.html';
+        return;
+      }
+
+      // Atualizar nome do usuário
+      document.getElementById('user-name').textContent = `Olá, ${session.user.name}`;
+
+      // Carregar reservas
+      await loadReservations();
+    });
+
+    async function loadReservations() {
+      const container = document.getElementById('reservations-container');
+      try {
+        const reservations = await getReservations();
+
+        if (reservations.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-body" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-light);">Nenhuma reserva registrada.</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sala</th>
+                  <th>Usuário</th>
+                  <th>Data</th>
+                  <th>Turno</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reservations.map(r => `
+                  <tr>
+                    <td>${r.space_name}</td>
+                    <td>${r.user_id}</td>
+                    <td>${formatDate(r.reservation_date)}</td>
+                    <td>${formatShift(r.shift)}</td>
+                    <td>${formatCurrency(r.price)}</td>
+                    <td>
+                      <span class="reservation-status ${r.status}">
+                        ${r.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                      </span>
+                    </td>
+                    <td>
+                      ${r.status === 'confirmed' ? `
+                        <button class="btn btn-danger btn-small" onclick="confirmCancelReservation(${r.id})">
+                          Cancelar
+                        </button>
+                      ` : '-'}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar reservas</div>`;
+      }
+    }
+
+    async function loadSpaces() {
+      const container = document.getElementById('spaces-container');
+      try {
+        const spaces = await getSpaces();
+
+        if (spaces.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-body" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-light);">Nenhuma sala registrada.</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="grid grid-2">
+            ${spaces.map(space => `
+              <div class="card">
+                <div class="card-header">${space.name}</div>
+                <div class="card-body">
+                  <p><strong>Descrição:</strong> ${space.description || 'N/A'}</p>
+                  <p><strong>Tamanho:</strong> ${space.size || 'N/A'}</p>
+                  <p><strong>Capacidade:</strong> ${space.capacity} pessoas</p>
+                  <p><strong>Valor:</strong> ${formatCurrency(space.price_per_shift)}/turno</p>
+                  ${space.amenities && space.amenities.length > 0 ? `
+                    <p><strong>Comodidades:</strong> ${space.amenities.join(', ')}</p>
+                  ` : ''}
+                  <p><strong>Status:</strong> ${space.is_active ? '✓ Ativa' : '✗ Inativa'}</p>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-primary btn-small" onclick="editSpace(${space.id})">
+                    Editar
+                  </button>
+                  <button class="btn btn-danger btn-small" onclick="toggleSpaceStatus(${space.id}, ${space.is_active})">
+                    ${space.is_active ? 'Desativar' : 'Ativar'}
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        container.innerHTML = `<div class="alert alert-danger">Erro ao carregar salas</div>`;
+      }
+    }
+
+    function showSection(sectionName) {
+      // Ocultar todas as seções
+      document.getElementById('section-reservations').style.display = 'none';
+      document.getElementById('section-spaces').style.display = 'none';
+
+      // Mostrar seção selecionada
+      if (sectionName === 'reservations') {
+        document.getElementById('section-reservations').style.display = 'block';
+        loadReservations();
+      } else if (sectionName === 'spaces') {
+        document.getElementById('section-spaces').style.display = 'block';
+        loadSpaces();
+      }
+
+      // Atualizar menu ativo
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function showNewSpaceModal() {
+      currentEditingSpaceId = null;
+      document.getElementById('modal-title').textContent = 'Nova Sala';
+      document.getElementById('space-form').reset();
+      document.getElementById('space-modal').classList.add('active');
+    }
+
+    async function editSpace(spaceId) {
+      try {
+        const space = await getSpace(spaceId);
+        currentEditingSpaceId = spaceId;
+
+        document.getElementById('modal-title').textContent = 'Editar Sala';
+        document.getElementById('space-name').value = space.name;
+        document.getElementById('space-description').value = space.description || '';
+        document.getElementById('space-size').value = space.size || '';
+        document.getElementById('space-capacity').value = space.capacity;
+        document.getElementById('space-price').value = space.price_per_shift;
+        document.getElementById('space-amenities').value = space.amenities.join(', ');
+        document.getElementById('space-active').checked = space.is_active;
+
+        document.getElementById('space-modal').classList.add('active');
+      } catch (error) {
+        showAlert('Erro ao carregar sala', 'danger');
+      }
+    }
+
+    function closeSpaceModal() {
+      document.getElementById('space-modal').classList.remove('active');
+      currentEditingSpaceId = null;
+    }
+
+    async function handleSpaceSubmit(event) {
+      event.preventDefault();
+
+      const spaceData = {
+        name: document.getElementById('space-name').value,
+        description: document.getElementById('space-description').value,
+        size: document.getElementById('space-size').value,
+        capacity: parseInt(document.getElementById('space-capacity').value),
+        price_per_shift: parseFloat(document.getElementById('space-price').value),
+        amenities: document.getElementById('space-amenities').value
+          .split(',')
+          .map(a => a.trim())
+          .filter(a => a),
+        is_active: document.getElementById('space-active').checked
+      };
+
+      try {
+        if (currentEditingSpaceId) {
+          await updateSpace(currentEditingSpaceId, spaceData);
+        } else {
+          await createSpace(spaceData);
+        }
+
+        closeSpaceModal();
+        await loadSpaces();
+      } catch (error) {
+        // Erro já foi exibido
+      }
+    }
+
+    async function toggleSpaceStatus(spaceId, currentStatus) {
+      try {
+        const space = await getSpace(spaceId);
+        space.is_active = !currentStatus;
+        await updateSpace(spaceId, space);
+        await loadSpaces();
+      } catch (error) {
+        showAlert('Erro ao atualizar sala', 'danger');
+      }
+    }
+  </script>
+</body>
+
+</html>

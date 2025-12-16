@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Admin - Cajuhub</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    }
+
+    .login-card {
+      background-color: var(--white);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      color: var(--text-light);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--text-light);
+    }
+
+    .login-footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: var(--white);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ALERTS -->
+  <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px;"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🏢 Cajuhub</h1>
+        <div class="admin-badge">👨‍💼 ADMINISTRADOR</div>
+        <p>Login Administrativo</p>
+      </div>
+
+      <form class="login-form" id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required placeholder="Sua senha">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.8rem; font-size: 1rem;">
+          Entrar como Admin
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Usuário comum? <a href="/login.html">Login Usuário</a></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+          <a href="/">← Voltar para início</a>
+        </p>
+      </div>
+
+      <!-- DADOS DE TESTE -->
+      <div
+        style="background-color: var(--light-bg); padding: 1rem; border-radius: 4px; margin-top: 1.5rem; font-size: 0.85rem;">
+        <p style="font-weight: 600; margin-bottom: 0.5rem;">📝 Dados de Teste:</p>
+        <p><strong>Email:</strong> admin@cajuhub.com</p>
+        <p><strong>Senha:</strong> admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    // Função para validar email
+    function validateEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    }
+
+    // Função para validar a senha
+    function validatePassword(password) {
+      return password.length >= 6;  // Senha com no mínimo 6 caracteres
+    }
+
+    // Função para fazer o login
+    async function login(email, password, isAdmin) {
+      const url = isAdmin ? '/api/auth/admin-login' : '/api/auth/login';  // Ajuste conforme sua API
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        showAlert(data.error || 'Erro ao fazer login', 'danger');
+        throw new Error('Falha no login');
+      }
+
+      const data = await response.json();
+      // Aqui você pode salvar o token ou outra informação de sessão no cookie/localStorage
+      return data;
+    }
+
+    // Função para verificar a sessão
+    async function checkSession() {
+      const response = await fetch('/api/auth/check-session', {
+        method: 'GET',
+        credentials: 'include'  // Assumindo que está usando cookies para sessão
+      });
+
+      const data = await response.json();
+      return data;  // Retorna a sessão do usuário (ex: { authenticated: true, user: { role: 'admin' } })
+    }
+
+    // Função para mostrar alertas
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alerts-container');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.innerText = message;
+      alertContainer.appendChild(alert);
+
+      // Auto-destroy after 5 seconds
+      setTimeout(() => {
+        alert.remove();
+      }, 5000);
+    }
+
+    // Função para lidar com o login do admin
+    async function handleAdminLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!validateEmail(email)) {
+        showAlert('Email inválido', 'danger');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        showAlert('Senha deve ter no mínimo 6 caracteres', 'danger');
+        return;
+      }
+
+      try {
+        await login(email, password, true);
+        setTimeout(() => {
+          window.location.href = '/admin-dashboard.html';
+        }, 1000);
+      } catch (error) {
+        // Erro já foi exibido pelo showAlert
+      }
+    }
+
+    // Verificar se já está autenticado
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await checkSession();
+      if (session.authenticated) {
+        if (session.user.role === 'admin') {
+          window.location.href = '/admin-dashboard.html';
+        } else {
+          window.location.href = '/user-dashboard.html';
+        }
+      }
+    });
+  </script>
+
+  </script>
+</body>
+
+</html>
