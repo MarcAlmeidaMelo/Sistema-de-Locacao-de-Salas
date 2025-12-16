@@ -472,6 +472,17 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
+// Servir arquivos HTML específicos
+app.get('/:file.html', (req, res) => {
+  const filePath = path.join(__dirname, '..', `${req.params.file}.html`);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(404).send('Arquivo não encontrado');
+    }
+  });
+});
+
+
 // =====================================================================
 // INICIAR SERVIDOR
 // =====================================================================
