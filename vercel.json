@@ -8,31 +8,6 @@
   ],
   "routes": [
     {
-      "src": "/css/(.*)",
-      "dest": "/css/$1",
-      "headers": {
-        "cache-control": "public, max-age=3600"
-      }
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1",
-      "headers": {
-        "cache-control": "public, max-age=3600"
-      }
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": {
-        "cache-control": "public, max-age=86400"
-      }
-    },
-    {
-      "src": "/(.*\\.html)",
-      "dest": "/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "server/server.js"
     }
