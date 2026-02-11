@@ -284,6 +284,12 @@ const parsedSpaces = spaces.map(space => {
 
 res.json(parsedSpaces);
 
+    } catch (error) {
+  console.error('Erro ao buscar salas:', error);
+  res.status(500).json({ error: 'Erro ao buscar salas' });
+}
+});
+
 
 // OBTER SALA POR ID
 app.get('/api/spaces/:id', async (req, res) => {
