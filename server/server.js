@@ -255,18 +255,35 @@ app.get('/api/spaces', async (req, res) => {
     );
     connection.release();
 
-    // Parsear amenities (JSON)
-    const parsedSpaces = spaces.map(space => ({
-      ...space,
-      amenities: space.amenities ? JSON.parse(space.amenities) : []
-    }));
 
-    res.json(parsedSpaces);
-  } catch (error) {
-    console.error('Erro ao buscar salas:', error);
-    res.status(500).json({ error: 'Erro ao buscar salas' });
+// Parsear amenities com proteção
+const parsedSpaces = spaces.map(space => {
+  let amenitiesParsed = [];
+
+  if (space.amenities) {
+    try {
+      let clean = space.amenities.trim();
+
+      // Remove aspas simples externas se existirem
+      if (clean.startsWith("'") && clean.endsWith("'")) {
+        clean = clean.slice(1, -1);
+      }
+
+      amenitiesParsed = JSON.parse(clean);
+    } catch (err) {
+      console.error("JSON inválido em amenities:", space.amenities);
+      amenitiesParsed = [];
+    }
   }
+
+  return {
+    ...space,
+    amenities: amenitiesParsed
+  };
 });
+
+res.json(parsedSpaces);
+
 
 // OBTER SALA POR ID
 app.get('/api/spaces/:id', async (req, res) => {
