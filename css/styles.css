@@ -1,10 +1,4 @@
-/* =====================================================================
-   STYLES.CSS - CAJUHUB
-   ===================================================================== */
 
-/* ===========================
-   VARIÁVEIS CSS
-=========================== */
 
 :root {
     --primary-color: #1e40af;
@@ -23,9 +17,7 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* ===========================
-   RESET E ESTILOS GLOBAIS
-=========================== */
+
 
 * {
     margin: 0;
@@ -44,9 +36,6 @@ body {
     line-height: 1.6;
 }
 
-/* ===========================
-   NAVBAR
-=========================== */
 
 nav {
     background-color: var(--white);
@@ -100,9 +89,7 @@ nav {
     gap: 1rem;
 }
 
-/* ===========================
-   HERO SECTION COM CARROSSEL
-=========================== */
+
 
 .hero {
     position: relative;
@@ -241,10 +228,6 @@ nav {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* ===========================
-   SEÇÕES
-=========================== */
-
 .section {
     padding: 4rem 2rem;
 }
@@ -262,9 +245,6 @@ nav {
     text-align: center;
 }
 
-/* ===========================
-   GRID
-=========================== */
 
 .grid {
     display: grid;
@@ -287,9 +267,7 @@ nav {
     }
 }
 
-/* ===========================
-   CARDS
-=========================== */
+
 
 .card {
     background-color: var(--white);
@@ -323,9 +301,7 @@ nav {
     gap: 0.5rem;
 }
 
-/* ===========================
-   BOTÕES
-=========================== */
+
 
 .btn {
     display: inline-block;
@@ -384,9 +360,7 @@ nav {
     font-size: 0.875rem;
 }
 
-/* ===========================
-   FORMULÁRIOS
-=========================== */
+
 
 .form-group {
     margin-bottom: 1.5rem;
@@ -431,9 +405,7 @@ nav {
     }
 }
 
-/* ===========================
-   DASHBOARD
-=========================== */
+
 
 .dashboard {
     display: flex;
@@ -508,9 +480,6 @@ nav {
     color: var(--text-dark);
 }
 
-/* ===========================
-   MODAL
-=========================== */
 
 .modal {
     display: none;
@@ -579,9 +548,7 @@ nav {
     }
 }
 
-/* ===========================
-   TABELAS
-=========================== */
+
 
 table {
     width: 100%;
@@ -613,9 +580,7 @@ table tbody tr:hover {
     background-color: var(--light-bg);
 }
 
-/* ===========================
-   ALERTAS
-=========================== */
+
 
 .alert {
     padding: 1rem;
@@ -642,9 +607,7 @@ table tbody tr:hover {
     border-left: 4px solid var(--danger-color);
 }
 
-/* ===========================
-   LOADING SPINNER
-=========================== */
+
 
 .loading {
     border: 4px solid var(--light-bg);
@@ -666,9 +629,6 @@ table tbody tr:hover {
     }
 }
 
-/* ===========================
-   CALENDAR
-=========================== */
 
 .calendar {
     background-color: var(--white);
@@ -764,10 +724,6 @@ table tbody tr:hover {
     text-decoration: line-through;
 }
 
-/* ===========================
-   RESERVATION STATUS
-=========================== */
-
 .reservation-status {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -786,9 +742,7 @@ table tbody tr:hover {
     color: #991b1b;
 }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
+
 
 @media (max-width: 768px) {
     .navbar {
