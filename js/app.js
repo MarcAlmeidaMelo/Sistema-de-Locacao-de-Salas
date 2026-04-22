@@ -1,10 +1,3 @@
-// =====================================================================
-// FRONTEND APP - CAJUHUB (CORRIGIDO)
-// =====================================================================
-
-// =====================================================================
-// FUNÇÕES DE UTILIDADE
-// =====================================================================
 
 function showAlert(message, type = 'info') {
     const container = document.getElementById('alerts-container');
@@ -48,9 +41,6 @@ function formatShift(shift) {
     return shifts[shift] || shift;
 }
 
-// =====================================================================
-// FUNÇÕES DE API - AUTENTICAÇÃO
-// =====================================================================
 
 async function checkSession() {
     try {
@@ -76,9 +66,7 @@ async function logout() {
     }
 }
 
-// =====================================================================
-// FUNÇÕES DE API - SALAS
-// =====================================================================
+
 
 async function getSpaces() {
     try {
@@ -162,9 +150,7 @@ async function updateSpace(spaceId, spaceData) {
     }
 }
 
-// =====================================================================
-// FUNÇÕES DE API - RESERVAS
-// =====================================================================
+
 
 async function getReservations() {
     try {
@@ -236,9 +222,7 @@ async function confirmCancelReservation(reservationId) {
     }
 }
 
-// =====================================================================
-// FUNÇÕES DE RENDERIZAÇÃO
-// =====================================================================
+
 
 function renderReservationCard(reservation) {
     const statusClass = reservation.status === 'confirmed' ? 'success' : 'danger';
@@ -269,16 +253,12 @@ function renderReservationCard(reservation) {
   `;
 }
 
-// =====================================================================
-// INICIALIZAÇÃO DO LOGIN
-// =====================================================================
+
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Cajuhub frontend carregado');
 
-    // =========================
-    // LOGIN USUÁRIO
-    // =========================
+
     const loginForm = document.getElementById('loginForm');
 
     if (loginForm) {
@@ -311,9 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================
-    // REGISTRO USUÁRIO
-    // =========================
+
     const registerForm = document.getElementById('registerForm');
 
     if (registerForm) {
@@ -354,9 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================
-    // LOGIN ADMIN
-    // =========================
+
     const adminLoginForm = document.getElementById('adminLoginForm');
 
     if (adminLoginForm) {
@@ -389,9 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================
-    // LOGOUT
-    // =========================
+
     const logoutBtn = document.getElementById('logoutBtn');
 
     if (logoutBtn) {
@@ -404,9 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================
-    // CARREGAR SALAS NA INDEX
-    // =========================
+
     const spacesContainer = document.getElementById('spaces-container');
 
     if (spacesContainer) {
