@@ -1,6 +1,3 @@
-// =====================================================================
-// CALENDAR.JS - CAJUHUB
-// =====================================================================
 
 class Calendar {
   constructor(elementId, options = {}) {
@@ -162,10 +159,6 @@ class Calendar {
     return this.selectedDate ? this.formatDateString(this.selectedDate) : null;
   }
 }
-
-// =====================================================================
-// INICIALIZAÇÃO DO CALENDÁRIO
-// =====================================================================
 
 function initializeCalendar(elementId, options = {}) {
   return new Calendar(elementId, options);
